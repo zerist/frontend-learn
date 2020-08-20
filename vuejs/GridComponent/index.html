@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://unpkg.com/vue"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <script type="text/x-template" id="grid-template">
+        <table>
+            <thead>
+            <tr>
+                <th v-for="key in columns"
+                    @click="sortBy(key)"
+                    :class="{ active: sortKey == key }">
+                    {{ key }}
+                    <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dec' "></span>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="entry in filteredHeroes">
+                <td v-for="key in columns">
+                    {{ entry[key] }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </script>
+</head>
+<body>
+    <div id="demo">
+        <form id="search">
+            Search <input name="query" v-model="searchQuery" />
+        </form>
+        <demo-grid
+            :heroes="gridData"
+            :columns="gridColumns"
+            :filter-key="searchQuery"
+        >
+        </demo-grid>
+    </div>
+
+    <script>
+        Vue.component("demo-grid", {
+            template: "#grid-template",
+            props: {
+                heroes: Array,
+                columns: Array,
+                filterKey: String
+            },
+
+            data: function () {
+                let sortOrders = {};
+                this.columns.forEach(function (key) {
+                    sortOrders[key] = 1;
+                });
+                return {
+                    sortKey: "",
+                    sortOrders: sortOrders,
+                }
+            },
+
+            computed: {
+                filteredHeroes: function () {
+                    let sortKey = this.sortKey;
+                    let filterKey = this.filterKey && this.filterKey.toLowerCase();
+                    let order = this.sortOrders[sortKey] || 1;
+                    let heroes = this.heroes;
+
+                    if (filterKey) {
+                        heroes = heroes.filter(function (row) {
+                            return Object.keys(row).forEach(function (key) {
+                                return (
+                                    String(row[key])
+                                        .toLowerCase()
+                                        .indexOf(filterKey) > -1
+                                );
+                            });
+                        });
+                    }
+
+                    if (sortKey) {
+                        heroes = heroes.slice().sort(function (a, b) {
+                            a = a[sortKey];
+                            b = b[sortKey];
+                            return (a === b ? 0 : a > b ? 1 : -1) * order;
+                        });
+                    }
+
+                    return heroes;
+                },
+            },
+
+            methods: {
+                sortBy: function (key) {
+                    this.sortKey = key;
+                    this.sortOrders[key] = this.sortOrders[key] * -1;
+                }
+            },
+        });
+
+        let demo = new Vue({
+            el: "#demo",
+            data: {
+                searchQuery: "",
+                gridColumns: ["name", "power"],
+                gridData: [
+                    {name: "zzz", power: "12"},
+                    {name: "xxx", power: "33"},
+                    {name: "ddd", power: "44"},
+                ]
+            }
+        })
+    </script>
+</body>
+</html>
