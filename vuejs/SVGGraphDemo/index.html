@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://unpkg.com/vue"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<div id="demo">
+    <svg width="200" height="200">
+        <polygraph :stats="stats"></polygraph>
+    </svg>
+
+    <div v-for="stat in stats" :key="stat.label">
+        <label>{{stat.label}}</label>
+        <input type="range" v-model="stat.value" min="0" max="100" />
+        <span>{{stat.value}}</span>
+        <button @click="remove(stat)" class="remove">X</button>
+    </div>
+    <form id="add">
+        <input name="newLabel" v-model="newLabel" />
+        <button @click="add">Add a Stat</button>
+    </form>
+    <pre id="raw">
+        {{stats}}
+    </pre>
+</div>
+<template id="polygraph-template">
+    <g>
+        <polygon :points="points"></polygon>
+        <circle cx="100" cy="100" r="80"></circle>
+        <axis-label
+            v-for="(stat, index) in stats"
+            :stat="stat"
+            :index="index"
+            :total="stats.length"
+            :key="index"
+        ></axis-label>
+    </g>
+</template>
+
+<template id="axis-label-template">
+    <text :x="point.x" :y="point.y">{{stat.label}}</text>
+</template>
+
+<script>
+    Vue.component('axis-label', {
+        template: '#axis-label-template',
+        props: {
+            stat: Object,
+            index: Number,
+            total: Number,
+        },
+        computed: {
+            point: function () {
+                return valueToPoint(
+                    +this.stat.value + 10,
+                    this.index,
+                    this.total,
+                )
+            }
+        }
+    });
+
+    Vue.component('polygraph', {
+        template: '#polygraph-template',
+        props: ['stats'],
+        computed: {
+            points: function () {
+                let total = this.stats.length;
+                return this.stats
+                    .map(function (stat, i) {
+                        let point = valueToPoint(stat.value, i, total);
+                        return point.x + "," + point.y;
+                    })
+                    .join(" ");
+            }
+        }
+    })
+
+    function valueToPoint(value, index, total) {
+        let x = 0;
+        let y = -value * 0.8;
+        let angle = ((Math.PI * 2) / total) * index;
+        let cos = Math.cos(angle);
+        let sin = Math.sin(angle);
+        let tx = x * cos - y * sin + 100;
+        let ty = x * sin - y * cos + 100;
+        return {
+            x: tx,
+            y: ty,
+        };
+    }
+
+    let stats = [
+        {label: "A", value: 100},
+        {label: "B", value: 100},
+        {label: "C", value: 100},
+        {label: "D", value: 100},
+        {label: "E", value: 100},
+    ];
+
+    new Vue({
+        el: '#demo',
+        data: {
+            newLabel: "",
+            stats: stats
+        },
+        methods: {
+            add: function (e) {
+                e.preventDefault();
+                if (!this.newLabel) return false;
+                this.stats.push({
+                    label: this.newLabel,
+                    value: 100
+                });
+                this.newLabel = "";
+            },
+            remove: function (stat) {
+                if (this.stats.length > 3) {
+                    this.stats.splice(this.stats.indexOf(stat), 1);
+                } else {
+                    alert("cant delete more!");
+                }
+            }
+        }
+    })
+</script>
+</body>
+</html>
