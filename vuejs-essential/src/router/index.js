@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import VueRouter from "vue-router";
 import routes from "@/router/routes";
-import {replaceState} from "vue-router/src/util/push-state";
 
 Vue.use(VueRouter);
 

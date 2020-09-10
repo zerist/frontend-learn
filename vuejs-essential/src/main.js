@@ -6,6 +6,7 @@ import './components';
 import store from "@/store";
 import VueSweetalert from './plugins/vue-sweetalert'
 import Message from "./plugins/message"
+import './filters'
 
 Vue.use(VueSweetalert)
 Vue.use(Message)

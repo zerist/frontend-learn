@@ -105,7 +105,7 @@ export default {
     },
     login(user) {
       this.$store.dispatch('login', user)
-      this.showMsg('register successed!', 'success')
+      this.showMsg('register success!', 'success')
     },
     showMsg(msg, type = 'warning') {
       this.msg = msg

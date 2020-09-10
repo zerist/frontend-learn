@@ -2,7 +2,7 @@
   <div class="blog-container">
     <div class="blog-pages">
       <div class="col-md-12 panel">
-        <h2 class="text-center">Create Articles</h2>
+        <h2 class="text-center">{{ articleId ? 'Edit Article' : 'Create Article' }}</h2>
 
         <hr>
 
@@ -53,27 +53,52 @@ export default {
     })
 
     this.simplemde = simplemde
-    this.fillContent()
+    //this.fillContent()
   },
   data() {
     return {
       title: '',
-      content: ''
+      content: '',
+      articleId: undefined
+    }
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.setArticleId(vm.$route.params.articleId)
+    })
+  },
+  beforeRouteLeave(to, from, next) {
+    this.clearData()
+    next()
+  },
+  watch: {
+    '$route'(to) {
+      this.clearData()
+      this.setArticleId(to.params.articleId)
     }
   },
   methods: {
     saveTitle() {
       localStorage.setItem('smde_title', this.title)
     },
-    fillContent() {
+    fillContent(articleId) {
       const simplemde = this.simplemde
-      const title = localStorage.getItem('smde_title')
+      const smde_title = localStorage.getItem('smde_title')
 
-      if (title !== null) {
-        this.title = title
+      if (articleId !== undefined) {
+        const article = this.$store.getters.getArticleById(articleId)
+
+        if (article) {
+          const {title, content} = article
+
+          this.title = smde_title || title
+          this.content = simplemde.value() || content
+          simplemde.value(this.content)
+        }
+      } else {
+        this.title = smde_title
+        this.content = simplemde.value()
       }
-
-      this.content = simplemde.value()
     },
     post() {
       const title = this.title
@@ -85,7 +110,7 @@ export default {
           content
         }
 
-        this.$store.dispatch('post', {article})
+        this.$store.dispatch('post', {article, articleId: this.articleId})
         this.clearData()
       }
     },
@@ -94,6 +119,17 @@ export default {
       localStorage.removeItem('smde_title')
       this.simplemde.value('')
       this.simplemde.clearAutosavedValue()
+    },
+    setArticleId(articleId) {
+      const localArticleId = localStorage.getItem('articleId')
+
+      if (articleId !== undefined && !(articleId === localArticleId)) {
+        this.clearData()
+      }
+
+      this.articleId = articleId
+      this.fillContent(articleId)
+      localStorage.setItem('articleId', articleId)
     }
   }
 }
