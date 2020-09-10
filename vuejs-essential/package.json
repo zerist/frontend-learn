@@ -10,6 +10,8 @@
     "bootstrap-sass": "^3.4.1",
     "core-js": "^3.6.5",
     "font-awesome": "^4.7.0",
+    "highlight.js": "^10.2.0",
+    "simplemde": "^1.11.2",
     "sweetalert": "^2.1.2",
     "vue": "^2.6.11",
     "vue-router": "^3.4.3",
