@@ -12,7 +12,7 @@
 
         <ul class="list-group">
           <li v-for="article in articles" class="list-group-item">
-            <img v-if="user" :src="user.avatar" class="avatar avatar-small">
+            <img :src="article.uavatar" class="avatar avatar-small">
             <router-link :to="`/articles/${article.articleId}/content`" class="title">
               {{article.title}}
             </router-link>

@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import localStorage from "@/util/localStorage";
 import router from "@/router";
 import * as moreActions from './actions'
+import * as moreGetters from './getters'
 
 Vue.use(Vuex)
 
@@ -61,7 +62,8 @@ const getters = {
         } else  {
             return null
         }
-    }
+    },
+    ...moreGetters
 }
 
 const store = new Vuex.Store({
