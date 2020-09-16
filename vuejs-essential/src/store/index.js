@@ -10,7 +10,8 @@ Vue.use(Vuex)
 const state = {
     user: localStorage.getItem('user'),
     auth: localStorage.getItem('auth'),
-    articles: localStorage.getItem('articles')
+    articles: localStorage.getItem('articles'),
+    searchValue: ''
 }
 
 const mutations = {
@@ -25,6 +26,9 @@ const mutations = {
     UPDATE_ARTICLES(state, articles) {
         state.articles = articles
         localStorage.setItem('articles', articles)
+    },
+    UPDATE_SEARCH_VALUE(store, searchValue) {
+        state.searchValue = searchValue
     }
 }
 

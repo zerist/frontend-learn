@@ -46,16 +46,22 @@
         </div>
       </div>
     </div>
+
+    <TheSideBar></TheSideBar>
   </div>
 </template>
 
 <script>
 import {mapState} from 'vuex'
 import Pagination from "@/components/Pagination";
+import TheSideBar from "@/components/layouts/TheSideBar";
 
 export default {
   name: "Home",
-  components: {Pagination},
+  components: {
+    Pagination,
+    TheSideBar
+  },
   data() {
     return {
       msg: '',
