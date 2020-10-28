@@ -46,5 +46,3 @@ function posorder(root) {
     posorder(root.right)
     console.log(root.val)
 }
-
-posorder(root)
